@@ -45,4 +45,14 @@ class CategoriaModel {
 
         return $this->db->lastInsertId();
     }
+
+    public function eliminarCategoria($id_categoria) {
+        $query = $this->db->prepare('DELETE FROM categorias WHERE id_categoria = ?');
+        $query->execute([$id_categoria]);
+    }
+
+    public function actualizarCategoria($id_categoria, $nombre, $descripcion) {
+        $query = $this->db->prepare('UPDATE categorias SET nombre = ?, descripcion = ? WHERE id_categoria = ?');
+        $query->execute([$nombre, $descripcion, $id_categoria]);
+    }
 }

@@ -17,12 +17,7 @@ class ProductApiController {
         $this->view = new JSONView();
     }
 
-    public function getAll() {
-        $productos = $this->model->getProducts();
-        $this->view->response($productos);
-    }
-
-    public function get($req, $res) {
+    public function getProduct($req, $res) {
         $id = $req->params->id;
 
         $product = $this->model->getProduct($id);
@@ -34,20 +29,18 @@ class ProductApiController {
         return $this->view->response($product);
     }
 
-    //Obtegno un json con todos los productos desde la bd
     public function getAllProducts($req, $res){
         $products = $this->model->getAllProducts();
 
         if (!$products) {
-            return $this->view->response("No encontrado", 404);
+            return $this->view->response("No se encontraron productos", 404);
         }
 
         return $this->view->response($products);
     }
 
-    //Eliminar un producto
     public function deleteProduct($req,$res){
-        $id = $req->params->id:
+        $id = $req->params->id;
 
         $product = $this->model->getProduct($id);
 
@@ -55,12 +48,10 @@ class ProductApiController {
             return $this->view->response("El producto con el id=$id no existe", 404);
         }
 
-
         $this->model->deleteProduct($id);
-        $this->view->response("Se eliminó el producto con id=$id");
+        return $this->view->response("Se eliminó el producto con id=$id");
     }
 
-    //inserto un producto
     public function insertProduct($req,$res){
         $id_categoria = $req->body->id_categoria;
         $nombre = $req->body->nombre;
