@@ -62,18 +62,18 @@ class Router {
         foreach ($this->middlewares as $middleware) {
             $middleware->run($this->request, $this->response);
         }
-        //$ruta->url //no compila!
+
         foreach ($this->routeTable as $route) {
             if($route->match($url, $verb)){
-                //TODO: ejecutar el controller//ejecutar el controller
-                // pasarle los parametros
+
                 $route->run($this->request, $this->response);
                 return;
             }
         }
-        //Si ninguna ruta coincide con el pedido y se configuró ruta por defecto.
-        if ($this->defaultRoute != null)
+
+        if ($this->defaultRoute != null) {
             $this->defaultRoute->run($this->request, $this->response);
+        }
     }
 
     public function addMiddleware($middleware) {

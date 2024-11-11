@@ -1,15 +1,25 @@
 <?php
 require_once 'libs/router.php';
+
 require_once 'app/controllers/product.api.controller.php';
-// require_once 'app/controllers/user.api.controller.php;
-// require_once 'app/middlewares/jwt.auth.middleware.php;
+require_once 'app/controllers/categoria.api.controller.php';
+require_once 'app/controllers/user.api.controller.php';
+require_once 'app/middlewares/jwt.auth.middleware.php';
 
 $router = new Router();
 
-// $router->addMiddleware(new JWTAuthMiddleware());
+$router->addMiddleware(new JWTAuthMiddleware());
 
-$router->addRoute('productos:id', 'GET', 'ProductApiController', 'get');
+$router->addRoute('productos', 'GET', 'ProductApiController', 'getAll');
+$router->addRoute('productos/:id', 'GET', 'ProductApiController', 'get');
 $router->addRoute('productos', 'POST', 'ProductApiController', 'insertProduct');
 
-// $router->addRoute('usuarios/token', 'GET', 'UserApiController', 'getToken');
+$router->addRoute('categorias', 'GET', 'CategoriaApiController', 'getCategorias');
+$router->addRoute('categorias/:id', 'GET', 'CategoriaApiController', 'getCategoria');
+$router->addRoute('categorias', 'POST', 'CategoriaApiController', 'insertarCategoria');
+
+$router->addRoute('usuarios/token', 'GET', 'UserApiController', 'getToken');
+
+$router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);
+
 

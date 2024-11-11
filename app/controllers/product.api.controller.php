@@ -1,7 +1,8 @@
 <?php
-
-require_once 'app/models/product.model.php';
-require_once 'app/views/json.view.php';
+require_once './app/models/product.model.php';
+require_once './app/models/proveedor.model.php';
+require_once './app/models/categoria.model.php';
+require_once './app/views/json.view.php';
 
 class ProductApiController {
     private $model;
@@ -16,7 +17,11 @@ class ProductApiController {
         $this->view = new JSONView();
     }
 
-    // obtener producto mediante un id
+    public function getAll() {
+        $productos = $this->model->getProducts();
+        $this->view->response($productos);
+    }
+
     public function get($req, $res) {
         $id = $req->params->id;
 
@@ -30,8 +35,9 @@ class ProductApiController {
     }
 
     public function insertProduct($req, $res) {
-        if (empty($req->body->id_categoria) || empty($req->body->nombre) || empty($req->body->descripcion) ||
-            empty($req->body->precio) || empty($req->body->peso_neto) || empty($req->body->fecha_empaquetado) ||
+        if (empty($req->body->id_categoria) || empty($req->body->nombre) ||
+            empty($req->body->descripcion) || empty($req->body->precio) ||
+            empty($req->body->peso_neto) || empty($req->body->fecha_empaquetado) ||
             empty($req->body->stock) || empty($req->body->id_proveedor))
         {
             return $this->view->response("Falta completar un campo: ", 400);
@@ -53,10 +59,10 @@ class ProductApiController {
         $descripcion = $req->body->descripcion;
         $precio = $req->body->precio;
         $peso_neto = $req->body->peso_neto;
-        $fecha_empaquetado = $req->body->fecha_empaquetado;
         $stock = $req->body->stock;
+        $fecha_empaquetado = $req->body->fecha_empaquetado;
 
-        $id = $this->model->insertProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, $fecha_vencimiento = null, $stock, $id_proveedor);
+        $id = $this->model->insertProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, $stock, $id_proveedor);
 
         if (!$id) {
             return $this->view->response("Error al insertar el producto en la base de datos", 500);
