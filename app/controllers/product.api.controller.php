@@ -29,40 +29,88 @@ class ProductApiController {
         return $this->view->response($product);
     }
 
-    public function insertProduct($req, $res) {
-        if (empty($req->body->id_categoria) || empty($req->body->nombre) || empty($req->body->descripcion) ||
-            empty($req->body->precio) || empty($req->body->peso_neto) || empty($req->body->fecha_empaquetado) ||
-            empty($req->body->stock) || empty($req->body->id_proveedor))
-        {
-            return $this->view->response("Falta completar un campo: ", 400);
+    //Obtegno un json con todos los productos desde la bd
+    public function getAllProducts($req, $res){
+        $products = $this->model->getAllProducts();
+
+        if (!$products) {
+            return $this->view->response("No encontrado", 404);
         }
 
-        // si los parametros estan completos comprobamos si tanto la categoria como el proveedor existen
-        $id_proveedor = $this->proveedorModel->getProveedorById($req->body->id_proveedor);
-        if (!$id_proveedor) {
-            return $this->view->response("El proveedor con ese id: $id_proveedor no existe", 404);
+        return $this->view->response($products);
+    }
+
+    //Eliminar un producto
+    public function deleteProduct($req,$res){
+        $id = $req->params->id:
+
+        $product = $this->model->getProduct($id);
+
+        if (!$product){
+            return $this->view->response("El producto con el id=$id no existe", 404);
         }
 
-        $id_categoria = $this->categoriaModel->getCategoriaById($req->body->id_categoria);
-        if (!$id_categoria) {
-            return $this->view->response("No existe categoria con id: $id_categoria", 404);
-        }
 
-        // si todo esta bien envio la solicitud
+        $this->model->deleteProduct($id);
+        $this->view->response("Se eliminó el producto con id=$id");
+    }
+
+    //inserto un producto
+    public function insertProduct($req,$res){
+        $id_categoria = $req->body->id_categoria;
         $nombre = $req->body->nombre;
         $descripcion = $req->body->descripcion;
         $precio = $req->body->precio;
         $peso_neto = $req->body->peso_neto;
-        $fecha_empaquetado = $req->body->fecha_empaquetado;
+        $fecha_empaquetado = $req->body->$fecha_empaquetado;
+        $fecha_vencimiento = $req->body->$fecha_vencimiento;
         $stock = $req->body->stock;
+        $id_proveedor = $req->body->$id_proveedor;
 
-        $id = $this->model->insertProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, $fecha_vencimiento = null, $stock, $id_proveedor);
-
-        if (!$id) {
-            return $this->view->response("Error al insertar el producto en la base de datos", 500);
+        if (empty($id_categoria) || empty($nombre) || empty($descripcion) || empty($precio) || empty($peso_neto)
+            || empty($fecha_empaquetado) || empty($fecha_vencimiento) || empty($stock) || empty ($id_proveedor))
+        {
+            return $this->view->response("Faltan completar datos", 400);
         }
 
-        $producto = $this->model->getProduct($id);
-        return $this->view->response($producto, 201);
+        $id = $this->model->insertProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, 
+                                          $fecha_vencimiento, $stock, $id_categoria);
+
+
+        if(!$id){
+            return $this->view->response("Error al insertar el producto", 500);
+        } else { //devuelvo el producto insertado
+            $product = $this->model->getProduct($id);
+            return $this->view->response($product, 201);
+        }
+    }
+
+    public function editProduct($req, $res){
+        
+        $id = $req->params->id;
+        if (!$id){
+            return $this->view->response("El producto con el id=$id no existe", 404);
+        }
+
+        $id_categoria = $req->body->id_categoria;
+        $nombre = $req->body->nombre;
+        $descripcion = $req->body->descripcion;
+        $precio = $req->body->precio;
+        $peso_neto = $req->body->peso_neto;
+        $fecha_empaquetado = $req->body->$fecha_empaquetado;
+        $fecha_vencimiento = $req->body->$fecha_vencimiento;
+        $stock = $req->body->stock;
+        $id_proveedor = $req->body->$id_proveedor;
+
+        if (empty($id_categoria) || empty($nombre) || empty($descripcion) || empty($precio) || empty($peso_neto)
+            || empty($fecha_empaquetado) || empty($fecha_vencimiento) || empty($stock) || empty ($id_proveedor))
+        {
+            return $this->view->response("Faltan completar datos", 400);
+        }
+
+        $this->model->updateProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, 
+                                    $fecha_vencimiento, $stock, $id_proveedor);
+        $product = $this->model->getProduct($id);
+        return $this->view->response($product, 200);
     }
 }
