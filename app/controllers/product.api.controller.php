@@ -1,7 +1,8 @@
 <?php
-
-require_once 'app/models/product.model.php';
-require_once 'app/views/json.view.php';
+require_once './app/models/product.model.php';
+require_once './app/models/proveedor.model.php';
+require_once './app/models/categoria.model.php';
+require_once './app/views/json.view.php';
 
 class ProductApiController {
     private $model;
@@ -16,7 +17,11 @@ class ProductApiController {
         $this->view = new JSONView();
     }
 
-    // obtener producto mediante un id
+    public function getAll() {
+        $productos = $this->model->getProducts();
+        $this->view->response($productos);
+    }
+
     public function get($req, $res) {
         $id = $req->params->id;
 
