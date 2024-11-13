@@ -44,7 +44,7 @@ class CategoriaApiController {
             return $this->view->response('No se encontraron resultados', 404);
         }
 
-        $this->view->response($categorias);
+        return $this->view->response($categorias);
     }
 
     public function insertarCategoria($req, $res) {
@@ -66,5 +66,40 @@ class CategoriaApiController {
 
         $producto = $this->model->getCategoriaById($id);
         return $this->view->response($producto, 201);
+    }
+
+    public function eliminarCategoria($req, $res) {
+        $id = $req->params->id;
+
+        $categoria = $this->model->getCategoriaById($id);
+
+        if (!$categoria) {
+            return $this->view->response("La categoria con el id: $id no existe", 404);
+        }
+
+        $this->model->eliminarCategoria($id);
+        return $this->view->response("La categoria con el id:$id fue eliminada con exito");
+    }
+
+    public function actualizarCategoria($req, $res) {
+        $id = $req->params->id;
+
+        $categoria = $this->model->getCategoriaById($id);
+
+        if (!$categoria) {
+            return $this->view->response("La categoria con el id:$id no existe", 404);
+        }
+
+        if (!isset($req->body->nombre) || !isset($req->body->descripcion)) {
+            return $this->view->response("Faltan completar campos", 400);
+        }
+
+        $nombre = $req->body->nombre;
+        $descripcion = $req->body->descripcion;
+
+        $this->model->actualizarCategoria($id, $nombre, $descripcion);
+
+        $categoria = $this->model->getCategoriaById($id);
+        return $this->view->response($categoria, 200);
     }
 }

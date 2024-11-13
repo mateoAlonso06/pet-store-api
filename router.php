@@ -20,6 +20,8 @@ $router->addRoute('productos/:id', 'PUT',    'ProductApiController',  'editProdu
 $router->addRoute('categorias', 'GET', 'CategoriaApiController', 'getCategorias');
 $router->addRoute('categorias/:id', 'GET', 'CategoriaApiController', 'getCategoria');
 $router->addRoute('categorias', 'POST', 'CategoriaApiController', 'insertarCategoria');
+$router->addRoute('categorias/:id', 'DELETE', 'CategoriaApiController', 'eliminarCategoria');
+$router->addRoute('categorias/:id', 'PUT', 'CategoriaApiController', 'actualizarCategoria');
 
 $router->addRoute('usuarios/token', 'GET', 'UserApiController', 'getToken');
 

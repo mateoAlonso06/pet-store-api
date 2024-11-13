@@ -23,7 +23,6 @@ class ProductApiController {
         return $this->view->response($product);
     }
 
-    //Obtegno un json con todos los productos desde la bd
     public function getAllProducts($req, $res){
         $products = $this->model->getAllProducts();
 
@@ -34,7 +33,6 @@ class ProductApiController {
         return $this->view->response($products);
     }
 
-    //Eliminar un producto
     public function deleteProduct($req,$res){
         $id = $req->params->id;
 
@@ -45,10 +43,9 @@ class ProductApiController {
         }
 
         $this->model->deleteProduct($id);
-        $this->view->response("Se eliminó el producto con id=$id");
+        return $this->view->response("Se eliminó el producto con id=$id");
     }
 
-    //inserto un producto
     public function insertProduct($req,$res){
         $id_categoria = $req->body->id_categoria;
         $nombre = $req->body->nombre;
