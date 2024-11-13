@@ -12,9 +12,9 @@ $router->addMiddleware(new JWTAuthMiddleware());
 
 $router->addRoute('productos',     'GET',    'ProductApiController',   'getAllProducts');
 $router->addRoute('productos/:id', 'GET',    'ProductApiController',   'getProduct');
-$router->addRoute('productos/:id', 'DELETE', 'ProductoApiController',  'deleteProduct');
+$router->addRoute('productos/:id', 'DELETE', 'ProductApiController',  'deleteProduct');
 $router->addRoute('productos',     'POST',   'ProductApiController',   'insertProduct');
-$router->addRoute('productos/:id', 'PUT',    'ProductoApiController',  'editProduct');
+$router->addRoute('productos/:id', 'PUT',    'ProductApiController',  'editProduct');
 
 
 $router->addRoute('categorias', 'GET', 'CategoriaApiController', 'getCategorias');
