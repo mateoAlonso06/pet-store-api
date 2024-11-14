@@ -12,10 +12,7 @@ class CategoriaApiController {
         $this->view = new JSONView();
     }
 
-    public function getCategoria($req, $res) {
-        // if (!$res->user) {
-        //     return $this->view->response("No autorizado", 401);
-        // }
+    public function getCategoria($req, $res) {        
         $id = $req->params->id;
     
         $categoria = $this->model->getCategoriaById($id);
@@ -38,7 +35,12 @@ class CategoriaApiController {
             $descripcion = $req->query->descripcion;
         }
 
-        $categorias = $this->model->getCategorias($nombre, $descripcion);
+        $orderBy = false;
+        if (isset($req->query->orderBy)) {
+            $orderBy = true;
+        }
+
+        $categorias = $this->model->getCategorias($nombre, $descripcion, $orderBy);
 
         if (!$categorias) {
             return $this->view->response('No se encontraron resultados', 404);
@@ -48,6 +50,10 @@ class CategoriaApiController {
     }
 
     public function insertarCategoria($req, $res) {
+        if (!$res->user) {
+            return $this->view->response("No autorizado", 401);
+        }
+
         if (empty($req->body->nombre)) {
             return $this->view->response('Falta completar el campo nombre: ', 400);
         }
@@ -69,6 +75,10 @@ class CategoriaApiController {
     }
 
     public function eliminarCategoria($req, $res) {
+        if (!$res->user) {
+            return $this->view->response("No autorizado", 401);
+        }
+
         $id = $req->params->id;
 
         $categoria = $this->model->getCategoriaById($id);
@@ -82,6 +92,10 @@ class CategoriaApiController {
     }
 
     public function actualizarCategoria($req, $res) {
+        if (!$res->user) {
+            return $this->view->response("No autorizado", 401);
+        }
+
         $id = $req->params->id;
 
         $categoria = $this->model->getCategoriaById($id);

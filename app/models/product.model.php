@@ -15,7 +15,25 @@ class ProductModel {
     }
 
     public function getAllProducts(){
-        $query = $this->db->prepare('SELECT * FROM productos');
+        $sql = 'SELECT * FROM productos';
+        $params = [];
+
+        if ($nombre !== null) {
+            $sql.= " WHERE nombre LIKE ?";
+            $params[] = "%$nombre%";
+        }
+
+        if ($nombre !== null && $descripcion !== null) {
+            $sql.= " AND descripcion LIKE ?";
+            $params[] = "%$descripcion%";
+        } else {
+            if ($nombre == null && $descripcion !== null) {
+                $sql.= " WHERE descripcion LIKE ?";
+                $params[] = "%$descripcion%";  
+            }
+        }
+
+        $query = $this->db->prepare($sql);
         $query->execute();
 
         return $query->fetchAll(PDO::FETCH_OBJ);
@@ -29,8 +47,8 @@ class ProductModel {
     }
 
     public function deleteProduct($id){
-        $query = $this->db->prepare('DELETE FROM productos WHERE id=?');
-        $query->execute($id);
+        $query = $this->db->prepare('DELETE FROM productos WHERE id_producto = ?');
+        $query->execute([$id]);
     }
 
     public function updateProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, $fecha_vencimiento, $stock, $id_proveedor){

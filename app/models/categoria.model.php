@@ -14,7 +14,7 @@ class CategoriaModel {
         return $query->fetch(PDO::FETCH_OBJ);
     }
 
-    public function getCategorias($nombre = null, $descripcion = null) {
+    public function getCategorias($nombre = null, $descripcion = null, $orderBy = false) {
         $sql = 'SELECT * FROM categorias';
         $params = [];
 
@@ -30,6 +30,17 @@ class CategoriaModel {
             if ($nombre == null && $descripcion !== null) {
                 $sql.= " WHERE descripcion LIKE ?";
                 $params[] = "%$descripcion%";  
+            }
+        }
+
+        if($orderBy) {
+            switch($orderBy) {
+                case 'nombre':
+                    $sql .= ' ORDER BY nombre ASC';
+                    break;
+                case 'descripcion':
+                    $sql .= ' ORDER BY prioridad ASC';
+                    break;
             }
         }
 

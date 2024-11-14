@@ -26,6 +26,16 @@ class ProductApiController {
     public function getAllProducts($req, $res){
         $products = $this->model->getAllProducts();
 
+        $nombre = null;
+        if (isset($req->query->nombre)) {
+            $nombre = $req->query->nombre;
+        }
+
+        $descripcion = null;
+        if (isset($req->query->descripcion)) {
+            $descripcion = $req->query->descripcion;
+        }
+
         if (!$products) {
             return $this->view->response("No se encontraron productos", 404);
         }

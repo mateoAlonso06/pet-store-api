@@ -22,6 +22,7 @@
     }
 
     function validateJWT($jwt) {
+        // eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5IiwidXNlcm5hbWUiOiJ3ZWJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczMTUzNzkwNywiZXhwIjoxNzMxNTM3OTY3fQ.nSA_3ZFy19_t-PumnF2WPv5cWogrIS-Q2AZgqNBuHh4
         $jwt = explode('.', $jwt);
         if(count($jwt) != 3) {
             return null;
@@ -29,6 +30,8 @@
         $header = $jwt[0];
         $payload = $jwt[1];
         $signature = $jwt[2];
+
+        // nSA_3ZFy19_t-PumnF2WPv5cWogrIS-Q2AZgqNBuHh4
 
         $valid_signature = hash_hmac('sha256', $header . "." . $payload, 'mi1secreto', true);
         $valid_signature = base64_encode($valid_signature);
