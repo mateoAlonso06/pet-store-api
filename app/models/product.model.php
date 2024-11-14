@@ -14,9 +14,28 @@ class ProductModel {
         return $query->fetch(PDO::FETCH_OBJ);
     }
 
-    public function getAllProducts(){
-        $query = $this->db->prepare('SELECT * FROM productos');
-        $query->execute();
+    public function getAllProducts($precio = null, $orderBy = false){
+        $sql = 'SELECT * FROM productos';
+        $params = [];
+
+        if ($precio != null){
+            $sql .= ' WHERE precio <= ?';
+            $params[] = $precio;
+        }
+        
+        if ($orderBy == true){
+            switch($orderBy){
+                case 'precio':
+                    $sql .= ' ORDER BY precio';
+                    break;
+                case 'stock':
+                    $sql .= ' ORDER BY stock';
+            }
+        }
+
+        //ejecuto la consulta
+        $query = $this->db->prepare($sql);
+        $query->execute($params);
 
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
@@ -29,7 +48,7 @@ class ProductModel {
     }
 
     public function deleteProduct($id){
-        $query = $this->db->prepare('DELETE FROM productos WHERE id=?');
+        $query = $this->db->prepare('DELETE FROM productos WHERE id_producto=?');
         $query->execute($id);
     }
 
