@@ -1,10 +1,11 @@
 <?php
+require_once './app/models/model.php';
 
-class ProductModel {
+class ProductModel extends Model {
     private $db;
 
     public function __construct() {
-        $this->db = new PDO('mysql:host=localhost;dbname=tienda_mascotas;charset=utf8', 'root', '');
+        parent::__construct();
     }
 
     public function getProduct($id) {
@@ -14,22 +15,31 @@ class ProductModel {
         return $query->fetch(PDO::FETCH_OBJ);
     }
 
-    public function getAllProducts($precio = null, $orderBy = false){
+    public function getAllProducts($precio = null, $orderBy = false, $nombre = null, $descripcion = null) {
         $sql = 'SELECT * FROM productos';
         $params = [];
 
-        if ($nombre !== null && $descripcion !== null) {
-            $sql.= " AND descripcion LIKE ?";
-            $params[] = "%$descripcion%";
-        } else {
-            if ($nombre == null && $descripcion !== null) {
-                $sql.= " WHERE descripcion LIKE ?";
-                $params[] = "%$descripcion%";  
-            }
+        if ($nombre !== null) {
+            $sql.= " WHERE nombre LIKE ?";
+            $params[] = "%$nombre%";
         }
 
-        if ($precio != null){
-            $sql .= ' WHERE precio <= ?';
+        if ($descripcion !== null) {
+            if ($nombre == null) {
+                $sql.= " WHERE descripcion LIKE ?";
+            } else {
+                $sql.= " AND descripcion LIKE ?";
+            }
+            $params[] = "%$descripcion%";
+        }
+
+        if ($precio !== null) {
+            if ($nombre == null && $descripcion == null) {
+                $sql.= " WHERE precio <= ?";
+            } else {
+                // ya con que alguna de las otros parametros no sea null significa que debo usar un AND
+                $sql.= " AND precio <= ?";
+            }
             $params[] = $precio;
         }
         

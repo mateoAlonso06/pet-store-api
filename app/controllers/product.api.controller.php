@@ -1,14 +1,20 @@
 <?php
 require_once './app/models/product.model.php';
 require_once './app/views/json.view.php';
+require_once './app/models/proveedor.model.php';
+require_once './app/models/categoria.model.php';
 
 class ProductApiController {
     private $model;
     private $view;
+    private $proveedorModel;
+    private $categoriaModel;
 
     public function __construct() {
         $this->model = new ProductModel();
         $this->view = new JSONView();
+        $this->proveedorModel = new ProveedorModel();
+        $this->categoriaModel = new CategoriaModel();
     }
 
     public function getProduct($req, $res) {
@@ -17,7 +23,7 @@ class ProductApiController {
         $product = $this->model->getProduct($id);
 
         if (!$product) {
-            return $this->view->response("No se encontro el producto", 404);
+            return $this->view->response("No se encontro el producto con id: $id", 404);
         }
 
         return $this->view->response($product);
@@ -33,8 +39,6 @@ class ProductApiController {
         if(isset($req->query->orderBy))
             $orderBy = $req->query->orderBy;
 
-        $products = $this->model->getAllProducts($precio, $orderBy);
-
         $nombre = null;
         if (isset($req->query->nombre)) {
             $nombre = $req->query->nombre;
@@ -45,6 +49,8 @@ class ProductApiController {
             $descripcion = $req->query->descripcion;
         }
 
+        $products = $this->model->getAllProducts($precio, $orderBy, $nombre, $descripcion);
+
         if (!$products) {
             return $this->view->response("No se encontraron productos", 404);
         }
@@ -52,7 +58,11 @@ class ProductApiController {
         return $this->view->response($products);
     }
 
-    public function deleteProduct($req,$res){
+    public function deleteProduct($req, $res) {
+        if (!$res->user) {
+            return $this->view->response("No autorizado", 401);
+        }
+        
         $id = $req->params->id;
 
         $product = $this->model->getProduct($id);
@@ -65,7 +75,22 @@ class ProductApiController {
         return $this->view->response("Se eliminó el producto con id=$id");
     }
 
-    public function insertProduct($req,$res){
+    public function insertProduct($req, $res) {
+        if (!$res->user) {
+            return $this->view->response("No autorizado", 401);
+        }
+
+         // Este es un objeto std class
+        $body = $req->body;
+        
+        $requiredFields = ['id_categoria', 'nombre', 'descripcion', 'precio', 'peso_neto', 'fecha_empaquetado', 'fecha_vencimiento', 'stock', 'id_proveedor'];
+
+        $error = $this->validateRequiredFields($body, $requiredFields);
+
+        if ($error) {
+            return $this->view->response($error, 400);
+        }
+
         $id_categoria = $req->body->id_categoria;
         $nombre = $req->body->nombre;
         $descripcion = $req->body->descripcion;
@@ -76,56 +101,40 @@ class ProductApiController {
         $stock = $req->body->stock;
         $id_proveedor = $req->body->id_proveedor;
 
-        if (empty($id_categoria)) {
-            return $this->view->response("Falta completar id_categoria", 400);
-        }
-        if (empty($nombre)) {
-            return $this->view->response("Falta completar nombre", 400);
-        }
-        if (empty($descripcion)) {
-            return $this->view->response("Falta completar descripcion", 400);
-        }
-        if (empty($precio)) {
-            return $this->view->response("Falta completar precio", 400);
-        }
-        if (empty($peso_neto)) {
-            return $this->view->response("Falta completar peso_neto", 400);
-        }
-        if (empty($fecha_empaquetado)) {
-            return $this->view->response("Falta completar fecha_empaquetado", 400);
-        }
-        if (empty($fecha_vencimiento)) {
-            return $this->view->response("Falta completar fecha_vencimiento", 400);
-        }
-        if (empty($stock)) {
-            return $this->view->response("Falta completar stock", 400);
-        }
-        if (empty($id_proveedor)) {
-            return $this->view->response("Falta completar id_proveedor", 400);
+        if (!$this->existeCategoria($id_categoria) && !$this->existeProveedor($id_proveedor)) {
+            return $this->view->response("La categoria o el proveedor no existen", 404);
         }
 
-        $id = $this->model->insertProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, 
-                                          $fecha_vencimiento, $stock, $id_categoria);
+        $id = $this->model->insertProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto,
+        $fecha_empaquetado, $fecha_vencimiento, $stock, $id_categoria);
 
         $product = $this->model->getProduct($id);
 
         if (!$product){
-            return $this->view->response("El producto con el id=$id no existe", 400);
+            return $this->view->response("El producto con el id: $id, no existe", 404);
         }
 
         return $this->view->response($product, 201);
     }
 
-    public function editProduct($req, $res){
-        $id = $req->params->id;
-
-        $product = $this->model->getProduct($id);
-
-        if (!$product){
-            return $this->view->response("El producto con el id=$id no existe", 404);
+    public function editProduct($req, $res) {
+        if (!$res->user) {
+            return $this->view->response("No autorizado", 401);
         }
 
-        $id_categoria = $req->body->id_categoria; //verificar que exista
+        $id = $req->params->id;
+
+        $body = $req->body; 
+        
+        $requiredFields = ['id_categoria', 'nombre', 'descripcion', 'precio', 'peso_neto', 'fecha_empaquetado', 'fecha_vencimiento', 'stock', 'id_proveedor'];
+
+        $error = $this->validateRequiredFields($body, $requiredFields);
+
+        if ($error) {
+            return $this->view->response($error, 400);
+        }
+
+        $id_categoria = $req->body->id_categoria;
         $nombre = $req->body->nombre;
         $descripcion = $req->body->descripcion;
         $precio = $req->body->precio;
@@ -133,18 +142,46 @@ class ProductApiController {
         $fecha_empaquetado = $req->body->fecha_empaquetado;
         $fecha_vencimiento = $req->body->fecha_vencimiento;
         $stock = $req->body->stock;
-        $id_proveedor = $req->body->id_proveedor; //Verificar que exista
+        $id_proveedor = $req->body->id_proveedor;
 
-        if (empty($id_categoria) || empty($nombre) || empty($descripcion) || empty($precio) || empty($peso_neto)
-            || empty($fecha_empaquetado) || empty($fecha_vencimiento) || empty($stock) || empty ($id_proveedor))
-        {
-            return $this->view->response("Faltan completar datos", 400);
+        if (!$this->existeCategoria($id_categoria) && !$this->existeProveedor($id_proveedor)) {
+            return $this->view->response("La categoria o el proveedor no existen", 404);
         }
 
-        $this->model->updateProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, 
-                                    $fecha_vencimiento, $stock, $id_proveedor);
+        $this->model->updateProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto,
+        $fecha_empaquetado, $fecha_vencimiento, $stock, $id_categoria);
 
         $product = $this->model->getProduct($id);
+
+        // devuelvo el producto actualizado
         return $this->view->response($product, 200);
+    }
+
+    private function existeProveedor($id_proveedor) {
+        $proveedor = $this->proveedorModel->getProveedorById($id_proveedor);
+
+        if (!$proveedor) {
+            return false;
+        }
+        return true;
+    }
+
+    private function existeCategoria($id_categoria) {
+        $categoria = $this->categoriaModel->getCategoriaById($id_categoria);
+
+        if (!$categoria) {
+            return false;
+        }
+        return true;
+    }
+
+    // Recibo un objeto y un array con los valores de los campos a verificar
+    public function validateRequiredFields($body, $fields) {
+        foreach ($fields as $field) {
+            if (empty($body->$field)) {
+                return "Falta completar el campo $field";
+            }
+        }
+        return null;  
     }
 }
