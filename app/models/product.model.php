@@ -14,14 +14,9 @@ class ProductModel {
         return $query->fetch(PDO::FETCH_OBJ);
     }
 
-    public function getAllProducts(){
+    public function getAllProducts($precio = null, $orderBy = false){
         $sql = 'SELECT * FROM productos';
         $params = [];
-
-        if ($nombre !== null) {
-            $sql.= " WHERE nombre LIKE ?";
-            $params[] = "%$nombre%";
-        }
 
         if ($nombre !== null && $descripcion !== null) {
             $sql.= " AND descripcion LIKE ?";
@@ -33,8 +28,24 @@ class ProductModel {
             }
         }
 
+        if ($precio != null){
+            $sql .= ' WHERE precio <= ?';
+            $params[] = $precio;
+        }
+        
+        if ($orderBy == true){
+            switch($orderBy){
+                case 'precio':
+                    $sql .= ' ORDER BY precio';
+                    break;
+                case 'stock':
+                    $sql .= ' ORDER BY stock';
+            }
+        }
+
+        //ejecuto la consulta
         $query = $this->db->prepare($sql);
-        $query->execute();
+        $query->execute($params);
 
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
@@ -47,8 +58,8 @@ class ProductModel {
     }
 
     public function deleteProduct($id){
-        $query = $this->db->prepare('DELETE FROM productos WHERE id_producto = ?');
-        $query->execute([$id]);
+        $query = $this->db->prepare('DELETE FROM productos WHERE id_producto=?');
+        $query->execute($id);
     }
 
     public function updateProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, $fecha_vencimiento, $stock, $id_proveedor){

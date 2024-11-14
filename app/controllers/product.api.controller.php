@@ -24,7 +24,16 @@ class ProductApiController {
     }
 
     public function getAllProducts($req, $res){
-        $products = $this->model->getAllProducts();
+        $precio = null;
+        if(isset($req->query->precio)){
+            $precio = $req->query->precio;
+        }
+
+        $orderBy = false;
+        if(isset($req->query->orderBy))
+            $orderBy = $req->query->orderBy;
+
+        $products = $this->model->getAllProducts($precio, $orderBy);
 
         $nombre = null;
         if (isset($req->query->nombre)) {
@@ -116,7 +125,7 @@ class ProductApiController {
             return $this->view->response("El producto con el id=$id no existe", 404);
         }
 
-        $id_categoria = $req->body->id_categoria;
+        $id_categoria = $req->body->id_categoria; //verificar que exista
         $nombre = $req->body->nombre;
         $descripcion = $req->body->descripcion;
         $precio = $req->body->precio;
@@ -124,7 +133,7 @@ class ProductApiController {
         $fecha_empaquetado = $req->body->fecha_empaquetado;
         $fecha_vencimiento = $req->body->fecha_vencimiento;
         $stock = $req->body->stock;
-        $id_proveedor = $req->body->id_proveedor;
+        $id_proveedor = $req->body->id_proveedor; //Verificar que exista
 
         if (empty($id_categoria) || empty($nombre) || empty($descripcion) || empty($precio) || empty($peso_neto)
             || empty($fecha_empaquetado) || empty($fecha_vencimiento) || empty($stock) || empty ($id_proveedor))
