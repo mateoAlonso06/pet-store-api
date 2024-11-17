@@ -2,8 +2,6 @@
 require_once './app/models/model.php';
 
 class ProductModel extends Model {
-    private $db;
-
     public function __construct() {
         parent::__construct();
     }
@@ -69,7 +67,7 @@ class ProductModel extends Model {
 
     public function deleteProduct($id){
         $query = $this->db->prepare('DELETE FROM productos WHERE id_producto=?');
-        $query->execute($id);
+        $query->execute([$id]);
     }
 
     public function updateProduct($id_categoria, $nombre, $descripcion, $precio, $peso_neto, $fecha_empaquetado, $fecha_vencimiento, $stock, $id_proveedor){

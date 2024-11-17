@@ -1,9 +1,7 @@
 <?php
-require_once './app/modelsÇ/model.php';
+require_once './app/models/model.php';
 
 class CategoriaModel extends Model {
-    private $db;
-
     public function __construct() {
         parent::__construct();
     }

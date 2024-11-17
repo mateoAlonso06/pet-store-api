@@ -2,8 +2,6 @@
 require_once './app/models/model.php';
 
 class ProveedorModel extends Model {
-    private $db;
-
     public function __construct() {
         parent::__construct();
     }
