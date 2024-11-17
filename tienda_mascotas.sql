@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-10-2024 a las 19:52:28
+-- Tiempo de generación: 17-11-2024 a las 01:18:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -38,8 +38,8 @@ CREATE TABLE `categorias` (
 --
 
 INSERT INTO `categorias` (`id_categoria`, `nombre`, `descripcion`) VALUES
-(26, 'Alimento para Perros', 'Alimentos secos y húmedos para perros de todas las razas y tamaños.'),
-(28, 'Juguetes para Mascotas', 'Diversos tipos de juguetes interactivos y de entretenimiento para mascotas.'),
+(26, 'Alimento para Perro', 'Alimentos secos y húmedos para perros de todas las razas y tamaños.'),
+(28, 'Juguete para Mascotas', 'Diversos tipos de juguetes interactivos y de entretenimiento para mascotas.'),
 (29, 'Camas y Colchones', 'Camas cómodas y duraderas para perros y gatos de todas las edades.'),
 (30, 'Accesorios para Paseo', 'Correas, collares y arneses para pasear de forma segura a tus mascotas.'),
 (31, 'Productos de Higiene', 'Shampoos, acondicionadores y artículos de limpieza para mantener la higiene de las mascotas.'),
@@ -72,15 +72,24 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id_producto`, `id_categoria`, `nombre`, `descripcion`, `precio`, `peso_neto`, `fecha_empaquetado`, `fecha_vencimiento`, `stock`, `id_proveedor`) VALUES
-(29, 30, 'Collar rosa', 'Collar rosa para darle el estilo que necesito tu perro', 10000, 1, '2024-10-27', NULL, 10, 1),
-(30, 26, 'Alimento Seco Perro Adulto', 'Alimento balanceado para perros adultos de todas las razas', 1500, 3, '2024-10-01', '2025-10-01', 30, 1),
-(32, 28, 'Pelota Interactiva para Mascot', 'Pelota de goma para entretener a tu mascota por horas', 500, 0, '2024-08-20', NULL, 100, 3),
-(33, 29, 'Cama Acolchonada para Perros', 'Cama de tamaño mediano para perros de hasta 20 kg', 2000, 3, '2024-07-10', NULL, 20, 4),
-(34, 30, 'Collar Rosa', 'Collar rosa para darle el estilo que necesita tu perro', 10000, 1, '2024-10-27', NULL, 10, 1),
-(35, 31, 'Shampoo para Mascotas', 'Shampoo suave para el pelaje de perros y gatos', 1200, 0, '2024-06-05', '2025-06-05', 60, 5),
-(36, 32, 'Abrigo para Perro', 'Abrigo de lana para perro, ideal para el invierno', 1500, 0, '2024-05-01', NULL, 15, 2),
-(37, 33, 'Decoración de Acuario', 'Piedras decorativas para acuarios de agua dulce', 300, 2, '2024-03-25', NULL, 100, 3),
-(38, 34, 'Transportadora Mediana', 'Transportadora de plástico resistente para gatos y perros pequeños', 5000, 2, '2024-02-10', NULL, 5, 4);
+(46, 28, 'Croquetas Premium', 'Alimento seco para perros adultos', 250, 5, '2024-10-01', '2025-10-01', 100, 1),
+(47, 28, 'Lata de Paté', 'Alimento húmedo para perros pequeños', 150, 1, '2024-11-15', '2025-11-15', 80, 2),
+(48, 29, 'Pelota de Goma', 'Pelota resistente ideal para juegos interactivos', 50, 0, '2024-09-10', '2026-09-10', 200, 3),
+(49, 29, 'Cuerda Trenzada', 'Juguete masticable para fortalecer dientes', 70, 0, '2024-08-05', '2026-08-05', 150, 4),
+(50, 30, 'Cama Ortopédica', 'Cama ergonómica para perros grandes', 500, 8, '2024-06-20', '2026-06-20', 25, 5),
+(51, 30, 'Colchón Acolchado', 'Colchón suave para gatos y perros pequeños', 300, 4, '2024-07-15', '2026-07-15', 40, 1),
+(52, 31, 'Arnés Ajustable', 'Arnés cómodo y seguro para paseos', 120, 1, '2024-05-10', '2026-05-10', 50, 2),
+(53, 31, 'Collar Reflectante', 'Collar con diseño seguro para la noche', 80, 0, '2024-04-01', '2026-04-01', 75, 3),
+(54, 32, 'Shampoo Antipulgas', 'Shampoo especializado para eliminar pulgas', 90, 1, '2024-03-12', '2026-03-12', 60, 4),
+(55, 32, 'Toallitas Húmedas', 'Toallitas para limpiar patas y pelaje', 40, 0, '2024-02-25', '2026-02-25', 100, 5),
+(56, 33, 'Abrigo Impermeable', 'Abrigo resistente al agua para climas fríos', 200, 2, '2024-01-30', '2026-01-30', 30, 1),
+(57, 33, 'Jersey de Lana', 'Ropa cálida y cómoda para mascotas', 150, 1, '2024-12-20', '2026-12-20', 45, 2),
+(58, 34, 'Filtro para Acuario', 'Filtro de agua para acuarios de hasta 50L', 300, 3, '2024-11-01', '2026-11-01', 20, 3),
+(59, 34, 'Decoración de Coral', 'Decoración realista para acuarios', 100, 1, '2024-10-10', '2026-10-10', 50, 4),
+(60, 35, 'Jaula Metálica', 'Jaula resistente para aves pequeñas', 400, 6, '2024-09-15', '2026-09-15', 15, 5),
+(61, 35, 'Transportadora Plegable', 'Transportadora ligera y fácil de usar', 350, 5, '2024-08-20', '2026-08-20', 25, 1),
+(62, 28, 'Semillas Variadas', 'Mezcla de semillas para aves domésticas', 120, 2, '2024-07-01', '2026-07-01', 100, 2),
+(63, 28, 'Barritas Energéticas', 'Snack nutritivo para aves', 80, 1, '2024-06-15', '2026-06-15', 70, 3);
 
 -- --------------------------------------------------------
 
@@ -166,13 +175,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
