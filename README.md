@@ -8,6 +8,30 @@
 - **URL**: `/productos`
 #### Respuesta exitosa
 - **Código**: `200 OK`
+
+## Query Parameters
+
+Puedes usar los siguientes parámetros opcionales para filtrar o modificar los resultados:
+
+### Filtrado:
+- **nombre**: Filtra productos cuyo nombre coincida parcial o totalmente con el valor especificado.  
+  **Ejemplo**: `/productos?nombre=Abrigo`
+
+- **descripcion**: Filtra productos por coincidencia en la descripción.  
+  **Ejemplo**: `/productos?descripcion=lana`
+
+- **precio**: Filtra productos por un precio específico.  
+  **Ejemplo**: `/productos?precio=1200`
+
+### Ordenamiento:
+- **orderBy**: Ordena los productos de manera ascendente según el atributo proporcionado (`precio` o `stock`).  
+  **Ejemplo**: `/productos?orderBy=precio`  
+  **Ejemplo**: `/productos?orderBy=stock`
+
+### Combinación de Parámetros:
+- Puedes combinar múltiples parámetros usando `&` para realizar búsquedas más avanzadas.  
+  **Ejemplo**: `/productos?nombre=Abrigo&descripcion=lana&orderBy=precio`
+
 - **Cuerpo**:
   ```json
   [
@@ -25,7 +49,6 @@
       }
   ]
   ```
-
   #### Errores
 
 - **500 Internal Server Error**: Problema en el servidor.
